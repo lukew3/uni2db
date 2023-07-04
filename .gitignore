@@ -1,1 +1,4 @@
 venv/
+*.db
+scrapers/*.db
+scrapers/*.log
