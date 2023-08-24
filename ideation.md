@@ -31,6 +31,7 @@ Requirement types:
 * COUNT (n) - A provided number of courses in the group must be completed
 
 ### Course Collection
+Indexed on `code` and `university` fields.
 ```json
 {
   "code": "CSE 2421",
@@ -73,6 +74,7 @@ Requirement types:
 ```
 
 ### University Collection
+Indexed on `name` field
 ```json
 {
   "name": "The Ohio State University"
