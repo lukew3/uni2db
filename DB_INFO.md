@@ -1,36 +1,12 @@
-# Ideation
+# Database Info 
 
-## Schema
+MongoDB is the chosen database.
 
-Document database with mongodb or other
+Chosen because different schools may have different properties for their classes. Implementers should aim to use commonly used attribute names but may add their own when their colleges have features that other colleges don't.
 
-Useful because different schools may have different properties for their classes. Implementers should aim to use commonly used attribute names but may add their own when their colleges have features that other colleges don't.
+## Collections 
 
-Requirements are objects, possibly nested in each other. 
-```json
-{
-  "type": "TYPE",
-  "items": [
-    ObjectId,
-    "COURSE CODE",
-    {
-      "type": "TYPE",
-      "items": [
-        "COURSE CODE",
-	ObjectId
-      ]
-    }
-  ]
-}
-```
-
-Requirement types:
-* AND (ALL) - All requirements must be completed
-* OR (ONE) - One of the requirements must be completed
-* CREDITS - A provided number of credits must be completed from the group
-* COUNT (n) - A provided number of courses in the group must be completed
-
-### Course Collection
+### Course
 Indexed on `code` and `university` fields.
 ```json
 {
@@ -73,7 +49,34 @@ Indexed on `code` and `university` fields.
 }
 ```
 
-### University Collection
+#### Requirements
+Items of a requirement can be nested requirements, objectids representing a course, or a string of a course code at the same school.
+
+```json
+{
+  "type": "TYPE",
+  "items": [
+    ObjectId,
+    "COURSE CODE",
+    {
+      "type": "TYPE",
+      "items": [
+        "COURSE CODE",
+	ObjectId
+      ]
+    }
+  ]
+}
+```
+
+Requirement types:
+* AND (ALL) - All requirements must be completed
+* OR (ONE) - One of the requirements must be completed
+* CREDITS - A provided number of credits must be completed from the group
+* COUNT (n) - A provided number of courses in the group must be completed
+
+
+### University
 Indexed on `name` field
 ```json
 {
@@ -81,7 +84,8 @@ Indexed on `name` field
 }
 ```
 
-### Subject Collection
+
+### Subject
 ```json
 {
   "school": "The Ohio State University",
