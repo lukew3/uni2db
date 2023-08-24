@@ -10,12 +10,12 @@ Requirements are objects, possibly nested in each other.
 ```json
 {
   "type": "TYPE",
-  "requirements": [
+  "items": [
     ObjectId,
     "COURSE CODE",
     {
       "type": "TYPE",
-      "requirements": [
+      "items": [
         "COURSE CODE",
 	ObjectId
       ]
