@@ -10,40 +10,62 @@ from tqdm import tqdm
 import requests
 import time
 import re
-import sqlite3
 import os.path
+from pymongo import MongoClient
 
-def read_page(conn, cursor, driver):
-    WebDriverWait(driver, timeout=10).until_not(lambda x: driver.find_element(By.ID, "WAIT_win0").is_displayed())
+MONGO_CONNECTION_STRING = "mongodb://localhost:27017/"
+mclient = MongoClient(MONGO_CONNECTION_STRING)
+db = mclient['collegedb']
+
+
+def read_page(driver):
+    WebDriverWait(driver, timeout=30).until_not(lambda x: driver.find_element(By.ID, "WAIT_win0").is_displayed())
     main_content = driver.find_element(By.ID, "ACE_SSR_CAT_SRCH1$0").get_attribute('innerHTML')
     soup = BeautifulSoup(main_content, 'html.parser')
     for i in range(50): # at most 50 items on each page
         if not soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CRSE_HEADER${i}"}): break
 
-        course_name = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CRSE_HEADER${i}"}).get_text()
-        print(course_name)
-        course_credits = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_UNITS_DESCR${i}"}).get_text()
-        course_campus = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CAMPUS_DESCR${i}"}).get_text()
-        course_career = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CAREER_DESCR${i}"}).get_text()
-        course_grading = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_GRADING_DESCR${i}"}).get_text()
-        course_attributes = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CRSE_ATTR_VALS${i}"}).get_text()
-        course_description = soup.find("textarea", {"id": f"OSR_CAT_SRCH_DESCRLONG${i}"}).get_text()
 
-        course_components1 = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_COMP_DESCR1${i}"}).get_text()
-        # course_option1 = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_COMP_1_OPTION${i}"}).get_text()
-        #course_components2 = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_COMP_DESCR2${i}"}).get_text()
-        # course_option2 = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_COMP_2_OPTION${i}"}).get_text()
-        #course_components3 = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_COMP_DESCR3${i}"}).get_text()
-        # course_option3 = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_COMP_3_OPTION${i}"}).get_text()
+        name = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CRSE_HEADER${i}"}).get_text()
+        print(name)
+        code, full_name = name.split(' - ', 1)
+        credits = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_UNITS_DESCR${i}"}).get_text().split(' units')[0]
+        new_course = {
+            'name': full_name,
+            'code': code,
+            'subject': code.split()[0],
+            'credits': credits,
+            'campus': soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CAMPUS_DESCR${i}"}).get_text(),
+            'career': soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CAREER_DESCR${i}"}).get_text(),
+            'grading': soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_GRADING_DESCR${i}"}).get_text(),
+            'attributes': soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CRSE_ATTR_VALS${i}"}).get_text().strip(),
+            'description': soup.find("textarea", {"id": f"OSR_CAT_SRCH_DESCRLONG${i}"}).get_text()
+        }
+
+        # Read components into properties
+        for j in range(1,4):
+            comp_desc = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_COMP_DESCR{j}${i}"}).get_text()
+            if comp_desc.strip() != '':
+                comp_opt = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_COMP_{j}_OPTION${i}"}).get_text()
+                new_course[f'{comp_desc.lower()}Required'] = (comp_opt == 'Required')
+
+        # Handle CCP Eligible Attribute
+        if 'Not eligible for College Credit Plus program' in new_course['attributes']:
+            new_course['attributes'] = ''.join(new_course['attributes'].split('Not eligible for College Credit Plus program')).strip()
+            new_course['ccpEligible'] = True
+        # Handle honors course attribute
+        if 'Honors Course' in new_course['attributes']:
+            new_course['attributes'] = ''.join(new_course['attributes'].split('Honors Course')).strip()
+            new_course['honorsCourse'] = True
+
+        db['course'].insert_one(new_course)
+        
     next_btn = driver.find_element(By.ID, "OSR_CAT_SRCH_WK_BUTTON_FORWARD")
     if not next_btn.get_attribute("disabled"):
         next_btn.click()
-        read_page(conn, cursor, driver)
+        read_page(driver)
 
 def scrape():
-    conn = sqlite3.connect('roomMatrix.db')
-    cursor = conn.cursor()
-
     # Initialize service and driver
     service = FirefoxService(executable_path=GeckoDriverManager().install())
     fireFoxOptions = webdriver.FirefoxOptions()
@@ -60,8 +82,8 @@ def scrape():
     # select_career = driver.find_element(By.ID, "OSR_CAT_SRCH_WK_ACAD_CAREER")
     driver.find_element(By.ID, "OSR_CAT_SRCH_WK_BUTTON1").click()
 
-    read_page(conn, cursor, driver)
-    pass
+    read_page(driver)
+
 
 if __name__ == '__main__':
     scrape()
