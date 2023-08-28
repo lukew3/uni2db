@@ -58,6 +58,18 @@ def read_page(driver):
             new_course['attributes'] = ''.join(new_course['attributes'].split('Honors Course')).strip()
             new_course['honorsCourse'] = True
 
+        # Handle prerequisites
+        prereq_pattern = r"Prereq: (.*?)(?:\.\s|\.$)"
+        match = re.search(prereq_pattern, new_course['description'])
+        if match:
+            new_course['prerequisites'] = match.group(1)
+        # Handle corequisites
+        coreq_pattern = r"Coreq: (.*?)(?:\.\s|\.$)"
+        match = re.search(coreq_pattern, new_course['description'])
+        if match:
+            new_course['corequisites'] = match.group(1)
+
+
         db['course'].insert_one(new_course)
         
     next_btn = driver.find_element(By.ID, "OSR_CAT_SRCH_WK_BUTTON_FORWARD")
