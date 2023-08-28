@@ -16,18 +16,21 @@ db = mclient['collegedb']
 @app.route('/')
 def schools():
     """ List schools """
-    return "Works!"
+    schools = db['course'].distinct("school");
+    return jsonify(schools)
+
 
 @app.route('/<school>')
 def subjects(school):
     """ List subjects at a given school """
-    subjects = db['course'].distinct("subject");
+    subjects = db['course'].distinct("subject", {'school': school});
     return jsonify(subjects)
+
 
 @app.route('/<school>/<subject>')
 def courses(school, subject):
     """ List courses in a subject at a given school """
-    courses = list(db['course'].find({'subject': subject}))
+    courses = list(db['course'].find({'subject': subject, 'school': school}))
     return jsonify(json.loads(json_util.dumps(courses)))
 
 

@@ -31,6 +31,7 @@ def read_page(driver):
         code, full_name = name.split(' - ', 1)
         credits = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_UNITS_DESCR${i}"}).get_text().split(' units')[0]
         new_course = {
+            'school': 'The Ohio State University',
             'name': full_name,
             'code': code,
             'subject': code.split()[0],
