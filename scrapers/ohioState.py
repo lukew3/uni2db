@@ -62,14 +62,15 @@ def read_page(driver):
         # Handle prerequisites
         prereq_pattern = r"Prereq: (.*?)(?:\.\s|\.$)"
         match = re.search(prereq_pattern, new_course['description'])
-        if match:
-            new_course['prerequisites'] = match.group(1)
+        if match: new_course['prerequisites'] = match.group(1)
         # Handle corequisites
-        coreq_pattern = r"Coreq: (.*?)(?:\.\s|\.$)"
+        coreq_pattern = r"(?:(?:Coreq)|(?:Concur)|(?:Prereq or concur)): (.*?)(?:\.\s|\.$)"
         match = re.search(coreq_pattern, new_course['description'])
-        if match:
-            new_course['corequisites'] = match.group(1)
-
+        if match: new_course['corequisites'] = match.group(1)
+        # Handle disqualifiers
+        coreq_pattern = r"Not open to students with credit for (.*?)(?:\.\s|\.$)"
+        match = re.search(coreq_pattern, new_course['description'])
+        if match: new_course['disqualifiers'] = match.group(1)
 
         db['course'].insert_one(new_course)
         
