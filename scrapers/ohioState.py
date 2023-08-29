@@ -6,9 +6,6 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.firefox import GeckoDriverManager
 from bs4 import BeautifulSoup
-from tqdm import tqdm
-import requests
-import time
 import re
 import os.path
 from pymongo import MongoClient
@@ -17,6 +14,27 @@ MONGO_CONNECTION_STRING = "mongodb://localhost:27017/"
 mclient = MongoClient(MONGO_CONNECTION_STRING)
 db = mclient['collegedb']
 
+# Parses a requirement string into a nested requirement map
+def req_parser(req_string, current_subject):
+    return req_string
+    # Add subjects to course codes
+    last_is_subject = False
+    req_string = req_string.upper()
+    s = req_string.split()
+    s2 = []
+    for word in s:
+        if not last_is_subject and word[0].isdigit():
+            s2.append(current_subject)
+            last_is_subject = False
+        elif word not in ['OR', 'AND']:
+            current_subject = word
+            last_is_subject = True
+        else:
+            last_is_subject = False
+        s2.append(word)
+    print(req_string)
+    print(' '.join(s2))
+    return ' '.join(s2)
 
 def read_page(driver):
     WebDriverWait(driver, timeout=30).until_not(lambda x: driver.find_element(By.ID, "WAIT_win0").is_displayed())
@@ -62,15 +80,15 @@ def read_page(driver):
         # Handle prerequisites
         prereq_pattern = r"Prereq: (.*?)(?:\.\s|\.$)"
         match = re.search(prereq_pattern, new_course['description'])
-        if match: new_course['prerequisites'] = match.group(1)
+        if match: new_course['prerequisites'] = req_parser(match.group(1), new_course['subject'])
         # Handle corequisites
         coreq_pattern = r"(?:(?:Coreq)|(?:Concur)|(?:Prereq or concur)): (.*?)(?:\.\s|\.$)"
         match = re.search(coreq_pattern, new_course['description'])
-        if match: new_course['corequisites'] = match.group(1)
+        if match: new_course['corequisites'] = req_parser(match.group(1), new_course['subject'])
         # Handle disqualifiers
         coreq_pattern = r"Not open to students with credit for (.*?)(?:\.\s|\.$)"
         match = re.search(coreq_pattern, new_course['description'])
-        if match: new_course['disqualifiers'] = match.group(1)
+        if match: new_course['disqualifiers'] = req_parser(match.group(1), new_course['subject'])
 
         db['course'].insert_one(new_course)
         
