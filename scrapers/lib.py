@@ -1,3 +1,4 @@
+import json
 import re
 from pymongo import MongoClient
 
@@ -42,7 +43,11 @@ def req_parser(req_string, current_subject):
             cur = {'type': 'AND', 'items': []}
         else:
             cur['items'].append(item)
-    m['items'].append(cur)
+
+    if len(m['items']) == 0:
+        m = cur
+    else:
+        m['items'].append(cur)
     return m
 
 
@@ -54,7 +59,7 @@ def parse_reqs():
                 print('===')
                 print(course[field])
                 update = req_parser(course[field], course['subject'])
-                print(update)
+                print(json.dumps(update, indent=4))
                 updates[field] = update
 #        db['course'].update_one(course, {'$set': updates})
 
