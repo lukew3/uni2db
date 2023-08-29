@@ -1,3 +1,4 @@
+import re
 from pymongo import MongoClient
 
 MONGO_CONNECTION_STRING = "mongodb://localhost:27017/"
@@ -24,7 +25,25 @@ def req_parser(req_string, current_subject):
         else:
             last_is_subject = False
         s2.append(word)
-    return ' '.join(s2)
+    s2 = ' '.join(s2)
+    s3 = re.compile(r'( AND | OR |,)').split(s2)
+    for i in range(len(s3)):
+        s3[i] = s3[i].strip().replace(',', '')
+    s3 = [item for item in s3 if item != '']
+    m = {'type': 'AND', 'items': []}
+    cur = {'type': 'AND', 'items': []}
+    for item in s3:
+        if item in ['AND', 'OR']:
+            cur['type'] = item
+        elif item[-1] == ';':
+            item = item[:-1]
+            cur['items'].append(item)
+            m['items'].append(cur)
+            cur = {'type': 'AND', 'items': []}
+        else:
+            cur['items'].append(item)
+    m['items'].append(cur)
+    return m
 
 
 def parse_reqs():
@@ -37,6 +56,7 @@ def parse_reqs():
                 update = req_parser(course[field], course['subject'])
                 print(update)
                 updates[field] = update
-        db['course'].update_one(course, {'$set': updates})
+#        db['course'].update_one(course, {'$set': updates})
+
 
 parse_reqs()
