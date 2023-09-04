@@ -12,7 +12,7 @@ from pymongo import MongoClient
 
 MONGO_CONNECTION_STRING = "mongodb://localhost:27017/"
 mclient = MongoClient(MONGO_CONNECTION_STRING)
-db = mclient['collegedb']
+db = mclient['uni2db']
 
 # Parses a requirement string into a nested requirement map
 def req_parser(req_string, current_subject):

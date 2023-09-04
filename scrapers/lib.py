@@ -4,7 +4,7 @@ from pymongo import MongoClient
 
 MONGO_CONNECTION_STRING = "mongodb://localhost:27017/"
 mclient = MongoClient(MONGO_CONNECTION_STRING)
-db = mclient['collegedb']
+db = mclient['uni2db']
 
 school = 'The Ohio State University'
 subjects = set(db['course'].distinct("subject", {'school': school}))
@@ -88,4 +88,5 @@ def parse_reqs():
 #        db['course'].update_one(course, {'$set': updates})
 
 
-parse_reqs()
+if __name__ == '__main__':
+    parse_reqs()

@@ -3,3 +3,4 @@ venv/
 scrapers/*.db
 scrapers/*.log
 db_archive/
+*.pyc
