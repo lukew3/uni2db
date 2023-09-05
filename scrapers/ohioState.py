@@ -7,8 +7,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.firefox import GeckoDriverManager
 from bs4 import BeautifulSoup
 import re
-import os.path
+import os
+import requests
 from pymongo import MongoClient
+import pandas as pd
+from tqdm import tqdm
 
 MONGO_CONNECTION_STRING = "mongodb://localhost:27017/"
 mclient = MongoClient(MONGO_CONNECTION_STRING)
@@ -97,7 +100,7 @@ def read_page(driver):
         next_btn.click()
         read_page(driver)
 
-def scrape():
+def scrape_courses():
     # Initialize service and driver
     service = FirefoxService(executable_path=GeckoDriverManager().install())
     fireFoxOptions = webdriver.FirefoxOptions()
@@ -117,5 +120,24 @@ def scrape():
     read_page(driver)
 
 
+def scrape_transfers():
+    file_name = 'equivalencies.xlsx'
+    if not os.path.isfile(file_name):
+        print('Downloading', file_name)
+        r = requests.get('https://registrar.osu.edu/transfer_credit/semester_equivalencies.xlsx')
+        open(file_name, 'wb').write(r.content)
+    print('Loading', file_name)
+    df = pd.read_excel(file_name)
+    print('Adding data to db')
+    for row in tqdm(df.itertuples(), total=len(df)):
+        db['equivalent'].insert_one({
+            "src_school": row[1],
+            "src_course": ' '.join(str(row[2]).split()),
+            "dest_course": ' '.join(str(row[4]).split()),
+            "dest_school": "The Ohio State University"
+        })
+
+
 if __name__ == '__main__':
-    scrape()
+#    scrape_courses()
+    scrape_transfers()
