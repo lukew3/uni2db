@@ -20,24 +20,6 @@ db = mclient['uni2db']
 # Parses a requirement string into a nested requirement map
 def req_parser(req_string, current_subject):
     return req_string
-    # Add subjects to course codes
-    last_is_subject = False
-    req_string = req_string.upper()
-    s = req_string.split()
-    s2 = []
-    for word in s:
-        if not last_is_subject and word[0].isdigit():
-            s2.append(current_subject)
-            last_is_subject = False
-        elif word not in ['OR', 'AND']:
-            current_subject = word
-            last_is_subject = True
-        else:
-            last_is_subject = False
-        s2.append(word)
-    print(req_string)
-    print(' '.join(s2))
-    return ' '.join(s2)
 
 def read_page(driver):
     WebDriverWait(driver, timeout=30).until_not(lambda x: driver.find_element(By.ID, "WAIT_win0").is_displayed())
@@ -100,7 +82,7 @@ def read_page(driver):
         next_btn.click()
         read_page(driver)
 
-def scrape_courses():
+def courses():
     # Initialize service and driver
     service = FirefoxService(executable_path=GeckoDriverManager().install())
     fireFoxOptions = webdriver.FirefoxOptions()
@@ -120,7 +102,7 @@ def scrape_courses():
     read_page(driver)
 
 
-def scrape_transfers():
+def transfers():
     file_name = 'equivalencies.xlsx'
     if not os.path.isfile(file_name):
         print('Downloading', file_name)
@@ -137,7 +119,3 @@ def scrape_transfers():
             "dest_school": "The Ohio State University"
         })
 
-
-if __name__ == '__main__':
-#    scrape_courses()
-    scrape_transfers()
