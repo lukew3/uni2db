@@ -75,7 +75,7 @@ def read_page(driver):
         match = re.search(coreq_pattern, new_course['description'])
         if match: new_course['disqualifiers'] = req_parser(match.group(1), new_course['subject'])
 
-        db['course'].insert_one(new_course)
+        db['courses'].insert_one(new_course)
         
     next_btn = driver.find_element(By.ID, "OSR_CAT_SRCH_WK_BUTTON_FORWARD")
     if not next_btn.get_attribute("disabled"):
@@ -112,10 +112,11 @@ def transfers():
     df = pd.read_excel(file_name)
     print('Adding data to db')
     for row in tqdm(df.itertuples(), total=len(df)):
-        db['equivalent'].insert_one({
+        db['transfers'].insert_one({
             "src_school": row[1],
             "src_course": ' '.join(str(row[2]).split()),
             "dest_course": ' '.join(str(row[4]).split()),
             "dest_school": "The Ohio State University"
         })
 
+courses()
