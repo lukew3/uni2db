@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Register blueprints
-app.register_blueprint(v0, url_prefix='/api/v0')
+app.register_blueprint(v0, url_prefix='/v0')
 
 # Run flask app
 if __name__ == '__main__':
