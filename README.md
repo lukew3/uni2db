@@ -6,6 +6,8 @@ This repo includes:
 * A command line tool to help you manage scraping (`cli.py`)
 * An API that you can host to access scraped data through http requests (`server.py`)
 
+Join the discord community: https://discord.gg/TxeZdrnTU7
+
 ## API Routes
 The following are API routes available. Results are returned in JSON lists of strings or objects.
 
