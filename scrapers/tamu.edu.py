@@ -29,11 +29,15 @@ def courses():
         # For each child of the element with id sc_sccoursedescs
         for item in list(soup.find('div', {'id': 'sc_sccoursedescs'}).children)[1:]:
             title = item.find('h2').contents[0]
-            description = ' '.join(''.join(item.find('p', {'class': 'courseblockdesc'}).parent.findAll(string=True)).split())
+            desc = ''.join(item.find('p', {'class': 'courseblockdesc'}).parent.findAll(string=True))
+            description = ' '.join(desc.split())
+            credits = desc.split('\n')[4][7:-2].strip()
             db['courses'].insert_one({
                 'school': 'Texas A&M University',
                 'name': ' '.join(title.split()[2:]),
                 'code': ' '.join(title.split()[:2]),
+                'min_credits': int(credits[0]),
+                'max_credits': int(credits[-1]),
                 'subject': subject.upper(),
                 'description': description
             })

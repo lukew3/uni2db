@@ -103,7 +103,7 @@ def courses():
 
 
 def transfers():
-    file_name = 'equivalencies.xlsx'
+    file_name = 'osu.edu-equivalencies.xlsx'
     if not os.path.isfile(file_name):
         print('Downloading', file_name)
         r = requests.get('https://registrar.osu.edu/transfer_credit/semester_equivalencies.xlsx')
