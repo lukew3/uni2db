@@ -1,4 +1,4 @@
-![uni2dbbannerraised](https://github.com/lukew3/uni2db/assets/47042841/df07ae36-b64c-4f4f-863d-4120bb485fd7)
+[![uni2dbbannerraised](https://github.com/lukew3/uni2db/assets/47042841/df07ae36-b64c-4f4f-863d-4120bb485fd7)](https://uni2db.com)
 
 The Unified University Database (uni<sup>2</sup>db).
 This repo includes:
