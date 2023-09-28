@@ -118,5 +118,3 @@ def transfers():
             "dest_course": ' '.join(str(row[4]).split()),
             "dest_school": "The Ohio State University"
         })
-
-courses()
