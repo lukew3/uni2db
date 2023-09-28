@@ -3,7 +3,7 @@
 The Unified University Database (uni<sup>2</sup>db).
 This repo includes:
 * Scrapers to get course info from college websites and populate a MongoDB database (`/scrapers`)
-  * A command line tool to help you manage scraping (`cli.py`)
+* A command line tool to help you manage scraping (`cli.py`)
 * An API that you can host to access scraped data through http requests (`server.py`)
 
 ## API Routes
