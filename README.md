@@ -1,6 +1,6 @@
 # Uni2db
 
-The Unified University Database (uni<sub>2</sub>db). Tools to get information about courses offered at various colleges. Includes scrapers to scrape course info from college websites and populate a database. Also an API to get information about courses from database.
+The Unified University Database (uni<sup>2</sup>db). Tools to get information about courses offered at various colleges. Includes scrapers to scrape course info from college websites and populate a database. Also an API to get information about courses from database.
 
 ## Routes
 The following are API routes available. Results are returned in JSON lists of strings or objects.

@@ -2,3 +2,6 @@ venv/
 *.db
 scrapers/*.db
 scrapers/*.log
+db_archive/
+*.pyc
+*.xlsx
