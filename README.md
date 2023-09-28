@@ -8,6 +8,9 @@ This repo includes:
 
 Join the discord community: https://discord.gg/TxeZdrnTU7
 
+## Contributing
+See [CONTRIBUTING.md](https://github.com/lukew3/uni2db/blob/main/CONTRIBUTING.md)
+
 ## API Routes
 The following are API routes available. Results are returned in JSON lists of strings or objects.
 
