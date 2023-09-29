@@ -43,5 +43,3 @@ def get_courses_page(pageNum):
 
 def courses():
     get_courses_page(1)
-
-courses()
