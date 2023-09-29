@@ -26,19 +26,19 @@ def get_course_page(url):
 
 
 def get_courses_page(pageNum):
-        url = f'https://www.catalogs.ohio.edu/content.php?catoid=82&navoid=7623&filter%5Bcpage%5D={pageNum}'
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        tags = soup.find_all('a', {'target': '_blank'})
-        if len(tags) == 11:
-            print('No more courses')
-            return
-        else:
-            for tag in tags:
-                if tag['href'].startswith('preview_course_nopop.php'):
-                    print("GETTING", tag.text)
-                    get_course_page(tag['href'])
-            get_courses_page(pageNum + 1)
+    url = f'https://www.catalogs.ohio.edu/content.php?catoid=82&navoid=7623&filter%5Bcpage%5D={pageNum}'
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    tags = soup.find_all('a', {'target': '_blank'})
+    if len(tags) == 11:
+        print('No more courses')
+        return
+    else:
+        for tag in tags:
+            if tag['href'].startswith('preview_course_nopop.php'):
+                print("GETTING", tag.text)
+                get_course_page(tag['href'])
+        get_courses_page(pageNum + 1)
 
 
 def courses():
