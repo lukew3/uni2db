@@ -13,11 +13,14 @@ def get_course_page(url):
     url2 = f'https://www.catalogs.ohio.edu/ajax/preview_course.php?{ids}&display_options=a:2:{{s:8:~location~;s:8:~template~;s:28:~course_program_display_field~;s:0:~~;}}&show'
     page = requests.get(url2)
     soup = BeautifulSoup(page.content, 'html.parser')
-    title = soup.find('a').text.strip()
-    desc = soup.find_all('div')[-1].text.split(title)[-1].strip()
+    title_full = soup.find('a').text.strip()
+    title_split = title_full.split(' - ', 1)
+    desc = soup.find_all('div')[-1].text.split(title_full)[-1].strip()
     db['courses'].insert_one({
         'school': 'Ohio University',
-        'title': title,
+        'code': title_split[0],
+        'subject': title_split[0].split()[0],
+        'title': title_split[1],
         'description': desc
     })
 
@@ -41,3 +44,4 @@ def get_courses_page(pageNum):
 def courses():
     get_courses_page(1)
 
+courses()
