@@ -26,10 +26,10 @@ def read_page(driver):
     main_content = driver.find_element(By.ID, "ACE_SSR_CAT_SRCH1$0").get_attribute('innerHTML')
     soup = BeautifulSoup(main_content, 'html.parser')
     for i in range(50): # at most 50 items on each page
-        if not soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CRSE_HEADER${i}"}): break
+        name_obj = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CRSE_HEADER${i}"})
+        if not name_obj: break
 
-
-        name = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_CRSE_HEADER${i}"}).get_text()
+        name = name_obj.get_text()
         print(name)
         code, full_name = name.split(' - ', 1)
         credits = soup.find("span", {"id": f"OSR_CAT_SRCH_OSR_UNITS_DESCR${i}"}).get_text().split(' units')[0]
@@ -118,5 +118,3 @@ def transfers():
             "dest_course": ' '.join(str(row[4]).split()),
             "dest_school": "The Ohio State University"
         })
-
-courses()

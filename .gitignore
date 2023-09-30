@@ -1,7 +1,5 @@
 venv/
-*.db
-scrapers/*.db
-scrapers/*.log
 db_archive/
+*.log
 *.pyc
 *.xlsx
