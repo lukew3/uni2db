@@ -35,4 +35,7 @@ Each type of data that we want to scrape has its own function. Each university f
 * `transfers()`
   * Transfers are courses that students can take at a source school and get credit for at a destination school. It has fields src_school, src_course, dest_course, dest_school
 
+#### Validation
+To ensure that your data is being saved properly, you may want to [download MongoDB Compass](https://www.mongodb.com/products/tools/compass) to view the database.
+
 If you are confused about anything or need help, ask on our discord server: https://discord.gg/qQEDzQMmB8
