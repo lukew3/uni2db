@@ -14,6 +14,17 @@ See [CONTRIBUTING.md](https://github.com/lukew3/uni2db/blob/main/CONTRIBUTING.md
 ## API Routes
 The following are API routes available. Results are returned in JSON lists of strings or objects.
 
-### `/` List schools in db
-### `/<school>/` List subjects at school
-### `/<school>/<subject>/` List courses in subject at school
+### `/v0/schools`
+Returns an array of distinct names from the courses collection
+
+### `/v0/subjects`
+List distinct subjects offered at a school. Requires query parameter for `school`
+
+### `/v0/courses`
+Lists all information about courses offered in a subject at a certain school. Requires query parameters for `school` and `subject`
+
+### `/v0/transfers`
+Lists all courses that can be transfered from a certain `src_school` to a `dest_school`. Requires query params for `src_school` and `dest_school`
+
+### `/v0/sections`
+Lists all information about sections offered for a certain course at a certain school. Requires query parameters for `school` and `code`.
